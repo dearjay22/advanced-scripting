@@ -11,8 +11,13 @@ conn = pymysql.connect(
 cursor = conn.cursor()
 
 def fetch_large_data():
-    print("Running slow query...")
-    cursor.execute("SELECT * FROM large_table ORDER BY RAND()")
+    print("Running Optimize query...")
+    cursor.execute("""
+                SELECT *
+                FROM large_table
+                WHERE id >= FLOOR(RAND() * (SELECT MAX(id) FROM large_table))
+                LIMIT 100
+                """)
     results = cursor.fetchall()
     print("Done.")
     return results
